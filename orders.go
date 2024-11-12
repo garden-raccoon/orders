@@ -19,8 +19,6 @@ const timeOut = 60
 // Debug on/off
 var Debug = true
 
-//
-
 // IOrderAPI is
 type IOrderAPI interface {
 	GetOrders() ([]*models.Order, error)
@@ -79,14 +77,16 @@ func (api *Api) CreateOrder(s *models.Order) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
 
-	order := &proto.Order{
+	var order = &proto.Order{
+		Uuid:        s.Uuid.Bytes(),
 		Title:       s.Title,
 		Description: s.Description,
-		Price:       float32(s.Price),
-		Uuid:        s.UUID.Bytes(),
 		Contain:     s.Contain,
-	}
-	// DEBUG Info
+		Price:       float32(s.Price),
+		Quantity: 	  int32(s.Quantity),
+		Day:         s.Day,
+		UserUuid:    s.UserUuid.Bytes(),
+	} // DEBUG Info
 	if Debug {
 		fmt.Println("order is")
 		fmt.Println(order)
