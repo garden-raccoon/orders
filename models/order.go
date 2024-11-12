@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/misnaged/scriptorium/logger"
 
 	proto "github.com/garden-raccoon/orders/protocols/orders"
 )
