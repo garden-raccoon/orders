@@ -10,12 +10,17 @@ type Orders struct {
 	Order []*Order
 }
 
+type DummyOrder struct {
+	OrderUuid uuid.UUID `json:"order_uuid"`
+	UserUuid  uuid.UUID `json:"user_uuid"`
+}
+
 // Order is
 type Order struct {
 	Name      string    `json:"title"`
 	Price     float64   `json:"price"`
 	MealType  string    `json:"mealType"`
-	OrderUuid uuid.UUID `json:"orderUuid"`
+	OrderUuid uuid.UUID `json:"order_uuid"`
 	UserUuid  uuid.UUID `json:"user_uuid"`
 	Quantity  int       `json:"quantity"`
 	Day       string    `json:"day"`
@@ -30,6 +35,18 @@ func NewOrder(name, mealType, day string, price float64, quantity int, orderUUID
 		MealType:  mealType,
 		Quantity:  quantity,
 		Day:       day,
+	}
+}
+func ProtoDummy(o *DummyOrder) *proto.DummyOrder {
+	return &proto.DummyOrder{
+		OrderUuid: o.OrderUuid.Bytes(),
+		UserUuid:  o.UserUuid.Bytes(),
+	}
+}
+func DummyFromProto(pb *proto.DummyOrder) *DummyOrder {
+	return &DummyOrder{
+		OrderUuid: uuid.FromBytesOrNil(pb.OrderUuid),
+		UserUuid:  uuid.FromBytesOrNil(pb.UserUuid),
 	}
 }
 

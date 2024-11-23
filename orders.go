@@ -26,6 +26,7 @@ type IOrderAPI interface {
 
 	//OrderByTitle(title string) (*models.Order, error)
 
+	CreateDummyOrder(s *models.DummyOrder) error
 	CreateOrders(s *models.Orders) error
 	// Close GRPC Api connection
 	Close() error
@@ -80,6 +81,18 @@ func (api *Api) CreateOrders(s *models.Orders) (err error) {
 	var orders = models.OrdersToProto(s.Order)
 
 	_, err = api.OrderServiceClient.CreateOrders(ctx, orders)
+	if err != nil {
+		return fmt.Errorf("create order api request: %w", err)
+	}
+	return nil
+}
+func (api *Api) CreateDummyOrder(s *models.DummyOrder) (err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
+	defer cancel()
+
+	dummy := models.ProtoDummy(s)
+
+	_, err = api.OrderServiceClient.CreateDummyOrder(ctx, dummy)
 	if err != nil {
 		return fmt.Errorf("create order api request: %w", err)
 	}

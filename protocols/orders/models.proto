@@ -18,3 +18,7 @@ message Orders{
     repeated Order Orders = 1;
 }
 
+message DummyOrder{
+    bytes           order_uuid        = 1;
+    bytes           user_uuid        = 2;
+}
