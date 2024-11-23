@@ -9,17 +9,16 @@ import (
 type Orders struct {
 	OrderUuid uuid.UUID `json:"order_uuid"`
 	UserUuid  uuid.UUID `json:"user_uuid"`
-	Order     *Order
+	Order     []*Order
 }
 
 type DummyOrder struct {
 	OrderUuid uuid.UUID `json:"order_uuid"`
 	UserUuid  uuid.UUID `json:"user_uuid"`
 }
+
+// Order is
 type Order struct {
-	Order []*Orderss
-}
-type Orderss struct {
 	Name     string  `json:"title"`
 	Price    float64 `json:"price"`
 	MealType string  `json:"mealType"`
@@ -27,8 +26,8 @@ type Orderss struct {
 	Day      string  `json:"day"`
 }
 
-func NewOrder(name, mealType, day string, price float64, quantity int) *Orderss {
-	return &Orderss{
+func NewOrder(name, mealType, day string, price float64, quantity int) *Order {
+	return &Order{
 		Name:     name,
 		Price:    price,
 		MealType: mealType,
@@ -50,7 +49,7 @@ func DummyFromProto(pb *proto.DummyOrder) *DummyOrder {
 }
 
 // Proto is
-func Proto(o *Orderss) *proto.Order {
+func Proto(o *Order) *proto.Order {
 	order := &proto.Order{
 		Name:     o.Name,
 		MealType: o.MealType,
@@ -61,8 +60,8 @@ func Proto(o *Orderss) *proto.Order {
 	return order
 }
 
-func OrderFromProto(pb *proto.Order) *Orderss {
-	order := &Orderss{
+func OrderFromProto(pb *proto.Order) *Order {
+	order := &Order{
 		Name:     pb.Name,
 		Price:    float64(pb.Price),
 		MealType: pb.MealType,
@@ -78,8 +77,7 @@ func OrdersToProto(orders *Orders) *proto.Orders {
 	pb := &proto.Orders{}
 	pb.OrderUuid = orders.OrderUuid.Bytes()
 	pb.UserUuid = orders.UserUuid.Bytes()
-	orders.Order = &Order{}
-	for _, b := range orders.Order.Order {
+	for _, b := range orders.Order {
 		pb.Orders = append(pb.Orders, Proto(b))
 	}
 	return pb
@@ -88,11 +86,10 @@ func OrdersToProto(orders *Orders) *proto.Orders {
 // OrdersFromProto is
 func OrdersFromProto(pb *proto.Orders) *Orders {
 	orders := &Orders{}
-	orders.Order = &Order{}
 	orders.OrderUuid = uuid.FromBytesOrNil(pb.OrderUuid)
 	orders.UserUuid = uuid.FromBytesOrNil(pb.UserUuid)
 	for _, b := range pb.Orders {
-		orders.Order.Order = append(orders.Order.Order, OrderFromProto(b))
+		orders.Order = append(orders.Order, OrderFromProto(b))
 	}
 	return orders
 }
