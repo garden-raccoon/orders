@@ -34,7 +34,7 @@ func NewOrder(name, mealType, day string, price float64, quantity int, orderUUID
 }
 
 // Proto is
-func (o Order) Proto() *proto.Order {
+func Proto(o *Order) *proto.Order {
 	order := &proto.Order{
 		OrderUuid: o.OrderUuid.Bytes(),
 		UserUuid:  o.UserUuid.Bytes(),
