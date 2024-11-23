@@ -63,7 +63,7 @@ func OrderFromProto(pb *proto.Order) *Order {
 // OrdersToProto is
 func OrdersToProto(orders []*Order) (pb *proto.Orders) {
 	for _, b := range orders {
-		pb.Orders = append(pb.Orders, b.Proto())
+		pb.Orders = append(pb.Orders, Proto(b))
 	}
 	return
 }
