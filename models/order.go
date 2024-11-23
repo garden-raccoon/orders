@@ -6,6 +6,10 @@ import (
 	proto "github.com/garden-raccoon/orders/protocols/orders"
 )
 
+type Orders struct {
+	Order []*Order
+}
+
 // Order is
 type Order struct {
 	Name      string    `json:"title"`

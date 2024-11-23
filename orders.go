@@ -26,7 +26,7 @@ type IOrderAPI interface {
 
 	//OrderByTitle(title string) (*models.Order, error)
 
-	CreateOrders(s []*models.Order) error
+	CreateOrders(s *models.Orders) error
 	// Close GRPC Api connection
 	Close() error
 }
@@ -73,11 +73,11 @@ func (api *Api) GetOrders() ([]*models.Order, error) {
 	}
 	return orders, nil
 }
-func (api *Api) CreateOrders(s []*models.Order) (err error) {
+func (api *Api) CreateOrders(s *models.Orders) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
 
-	var orders = models.OrdersToProto(s)
+	var orders = models.OrdersToProto(s.Order)
 
 	_, err = api.OrderServiceClient.CreateOrders(ctx, orders)
 	if err != nil {
