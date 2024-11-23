@@ -8,29 +8,32 @@ import (
 
 // Order is
 type Order struct {
-	Name     string    `json:"title"`
-	Price    float64   `json:"price"`
-	MealType string    `json:"mealType"`
-	UserUuid uuid.UUID `json:"user_uuid"`
-	Quantity int       `json:"quantity"`
-	Day      string    `json:"day"`
+	Name      string    `json:"title"`
+	Price     float64   `json:"price"`
+	MealType  string    `json:"mealType"`
+	OrderUuid uuid.UUID `json:"orderUuid"`
+	UserUuid  uuid.UUID `json:"user_uuid"`
+	Quantity  int       `json:"quantity"`
+	Day       string    `json:"day"`
 }
 
-func NewOrder(name, mealType, day string, price float64, quantity int, userUUID uuid.UUID) *Order {
+func NewOrder(name, mealType, day string, price float64, quantity int, orderUUID, userUUID uuid.UUID) *Order {
 	return &Order{
-		Name:     name,
-		Price:    price,
-		UserUuid: userUUID,
-		MealType: mealType,
-		Quantity: quantity,
-		Day:      day,
+		Name:      name,
+		Price:     price,
+		OrderUuid: orderUUID,
+		UserUuid:  userUUID,
+		MealType:  mealType,
+		Quantity:  quantity,
+		Day:       day,
 	}
 }
 
 // Proto is
 func (o Order) Proto() *proto.Order {
 	order := &proto.Order{
-		OrderUuid: o.UserUuid.Bytes(),
+		OrderUuid: o.OrderUuid.Bytes(),
+		UserUuid:  o.UserUuid.Bytes(),
 		Name:      o.Name,
 		MealType:  o.MealType,
 		Price:     float32(o.Price),
@@ -42,12 +45,13 @@ func (o Order) Proto() *proto.Order {
 
 func OrderFromProto(pb *proto.Order) *Order {
 	order := &Order{
-		Name:     pb.Name,
-		Price:    float64(pb.Price),
-		MealType: pb.MealType,
-		UserUuid: uuid.UUID{},
-		Quantity: int(pb.Quantity),
-		Day:      pb.Day,
+		Name:      pb.Name,
+		Price:     float64(pb.Price),
+		MealType:  pb.MealType,
+		OrderUuid: uuid.FromBytesOrNil(pb.OrderUuid),
+		UserUuid:  uuid.FromBytesOrNil(pb.UserUuid),
+		Quantity:  int(pb.Quantity),
+		Day:       pb.Day,
 	}
 	return order
 }

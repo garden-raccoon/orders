@@ -6,11 +6,12 @@ option go_package = "protocols/orders";
 // Shop is
 message Order {
     bytes           order_uuid        = 1;
-    string          name        = 2;
-    string          mealType = 3;
-    float           price       = 4;
-    int32 quantity =5;
-    string day = 6;
+    bytes           user_uuid        = 2;
+    string          name        = 3;
+    string          mealType = 4;
+    float           price       = 5;
+    int32 quantity =6;
+    string day = 7;
 }
 
 message Orders{
