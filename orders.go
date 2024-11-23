@@ -24,9 +24,9 @@ type IOrderAPI interface {
 	GetOrders() ([]*models.Order, error)
 	AllOrders(pb *proto.Orders) ([]*models.Order, error)
 
-	OrderByTitle(title string) (*models.Order, error)
+	//OrderByTitle(title string) (*models.Order, error)
 
-	CreateOrder(s *models.Order) error
+	CreateOrders(s []*models.Order) error
 	// Close GRPC Api connection
 	Close() error
 }
@@ -73,38 +73,13 @@ func (api *Api) GetOrders() ([]*models.Order, error) {
 	}
 	return orders, nil
 }
-func (api *Api) CreateOrder(s *models.Order) (err error) {
+func (api *Api) CreateOrders(s []*models.Order) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
 
-	var order = &proto.Order{
-		Uuid:        s.Uuid.Bytes(),
-		Title:       s.Title,
-		Description: s.Description,
-		Contain:     s.Contain,
-		Price:       float32(s.Price),
-		Quantity: 	  int32(s.Quantity),
-		Day:         s.Day,
-		UserUuid:    s.UserUuid.Bytes(),
-	} // DEBUG Info
-	if Debug {
-		fmt.Println("order is")
-		fmt.Println(order)
+	var orders = models.OrdersToProto(s)
 
-		if order == nil {
-			fmt.Println("order is nil")
-		} else {
-			fmt.Println("order is not nil")
-		}
-		if api.OrderServiceClient == nil {
-			fmt.Println("OrderServiceClient is nil")
-		} else {
-			fmt.Println("OrderServiceClient is not nil")
-		}
-	}
-	//--- **** ---///
-
-	_, err = api.OrderServiceClient.CreateOrder(ctx, order)
+	_, err = api.OrderServiceClient.CreateOrders(ctx, orders)
 	if err != nil {
 		return fmt.Errorf("create order api request: %w", err)
 	}
@@ -124,24 +99,24 @@ func (api *Api) initConn(addr string) (err error) {
 }
 
 // OrderByTitle is
-func (api *Api) OrderByTitle(title string) (*models.Order, error) {
-	getter := &proto.OrderGetter{
-		Getter: &proto.OrderGetter_Title{
-			Title: title,
-		},
-	}
-	return api.getOrder(getter)
-}
-
-// getOrder is
-func (api *Api) getOrder(getter *proto.OrderGetter) (*models.Order, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
-	defer cancel()
-
-	resp, err := api.OrderServiceClient.OrderByTitle(ctx, getter)
-	if err != nil {
-		return nil, fmt.Errorf("get battle api request: %w", err)
-	}
-
-	return models.OrderFromProto(resp), nil
-}
+//func (api *Api) OrderByTitle(title string) (*models.Order, error) {
+//	getter := &proto.OrderGetter{
+//		Getter: &proto.OrderGetter_Title{
+//			Title: title,
+//		},
+//	}
+//	return api.getOrder(getter)
+//}
+//
+//// getOrder is
+//func (api *Api) getOrder(getter *proto.OrderGetter) (*models.Order, error) {
+//	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
+//	defer cancel()
+//
+//	resp, err := api.OrderServiceClient.OrderByTitle(ctx, getter)
+//	if err != nil {
+//		return nil, fmt.Errorf("get battle api request: %w", err)
+//	}
+//
+//	return models.OrderFromProto(resp), nil
+//}

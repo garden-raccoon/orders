@@ -8,18 +8,10 @@ import "models.proto";
 // OrderService is
 service OrderService {
     rpc GetOrders(OrderEmpty) returns(models.Orders);
-    rpc CreateOrder(models.Order) returns(OrderEmpty);
-    rpc OrderByTitle(OrderGetter) returns(models.Order);
+    rpc CreateOrders(models.Orders) returns(OrderEmpty);
 
 
 }
 
 message OrderEmpty {}
 
-message OrderGetter {
-    oneof getter {
-        bytes   uuid    = 1;
-        string  code    = 2;
-        string  title    = 3;
-    }
-}

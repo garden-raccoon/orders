@@ -8,47 +8,46 @@ import (
 
 // Order is
 type Order struct {
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Price       float64   `json:"price"`
-	Uuid        uuid.UUID `json:"uuid"`
-	UserUuid    uuid.UUID `json:"user-uuid"`
-	Contain     []string  `json:"contain"`
-	Quantity    int       `json:"quantity"`
-	Day         string    `json:"day"`
+	Name     string    `json:"title"`
+	Price    float64   `json:"price"`
+	MealType string    `json:"mealType"`
+	UserUuid uuid.UUID `json:"user_uuid"`
+	Quantity int       `json:"quantity"`
+	Day      string    `json:"day"`
 }
 
-func NewOrder(title, description, day string, price float64, quantity int, uuid, userUUID uuid.UUID, contain []string) *Order {
+func NewOrder(name, mealType, day string, price float64, quantity int, userUUID uuid.UUID) *Order {
 	return &Order{
-		Title:       title,
-		Description: description,
-		Price:       price,
-		Uuid:        uuid,
-		UserUuid:    userUUID,
-		Contain:     contain,
-		Quantity:    quantity,
-		Day:         day,
+		Name:     name,
+		Price:    price,
+		UserUuid: userUUID,
+		MealType: mealType,
+		Quantity: quantity,
+		Day:      day,
 	}
 }
 
 // Proto is
 func (o Order) Proto() *proto.Order {
 	order := &proto.Order{
-		Uuid:        o.Uuid.Bytes(),
-		Description: o.Description,
-		Contain:     o.Contain,
-		Price:       float32(o.Price),
-		Title:       o.Title,
+		OrderUuid: o.UserUuid.Bytes(),
+		Name:      o.Name,
+		MealType:  o.MealType,
+		Price:     float32(o.Price),
+		Quantity:  int32(o.Quantity),
+		Day:       o.Day,
 	}
 	return order
 }
 
 func OrderFromProto(pb *proto.Order) *Order {
 	order := &Order{
-		Title:       pb.Title,
-		Description: pb.Description,
-		Price:       float64(pb.Price),
-		Contain:     pb.Contain,
+		Name:     pb.Name,
+		Price:    float64(pb.Price),
+		MealType: pb.MealType,
+		UserUuid: uuid.UUID{},
+		Quantity: int(pb.Quantity),
+		Day:      pb.Day,
 	}
 	return order
 }
