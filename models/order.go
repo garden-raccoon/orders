@@ -74,9 +74,9 @@ func OrderFromProto(pb *proto.Order) *Order {
 
 // OrdersToProto is
 func OrdersToProto(orders *Orders) (pb *proto.Orders) {
-	orders.OrderUuid = uuid.FromBytesOrNil(pb.OrderUuid)
-	orders.UserUuid = uuid.FromBytesOrNil(pb.UserUuid)
 
+	pb.OrderUuid = orders.OrderUuid.Bytes()
+	pb.UserUuid = orders.UserUuid.Bytes()
 	for _, b := range orders.Order {
 		pb.Orders = append(pb.Orders, Proto(b))
 	}
@@ -85,9 +85,8 @@ func OrdersToProto(orders *Orders) (pb *proto.Orders) {
 
 // OrdersFromProto is
 func OrdersFromProto(pb *proto.Orders) (orders *Orders) {
-	pb.OrderUuid = orders.OrderUuid.Bytes()
-	pb.UserUuid = orders.UserUuid.Bytes()
-
+	orders.OrderUuid = uuid.FromBytesOrNil(pb.OrderUuid)
+	orders.UserUuid = uuid.FromBytesOrNil(pb.UserUuid)
 	for _, b := range pb.Orders {
 		orders.Order = append(orders.Order, OrderFromProto(b))
 	}
