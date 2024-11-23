@@ -7,7 +7,9 @@ import (
 )
 
 type Orders struct {
-	Order []*Order
+	OrderUuid uuid.UUID `json:"order_uuid"`
+	UserUuid  uuid.UUID `json:"user_uuid"`
+	Order     []*Order
 }
 
 type DummyOrder struct {
@@ -17,24 +19,20 @@ type DummyOrder struct {
 
 // Order is
 type Order struct {
-	Name      string    `json:"title"`
-	Price     float64   `json:"price"`
-	MealType  string    `json:"mealType"`
-	OrderUuid uuid.UUID `json:"order_uuid"`
-	UserUuid  uuid.UUID `json:"user_uuid"`
-	Quantity  int       `json:"quantity"`
-	Day       string    `json:"day"`
+	Name     string  `json:"title"`
+	Price    float64 `json:"price"`
+	MealType string  `json:"mealType"`
+	Quantity int     `json:"quantity"`
+	Day      string  `json:"day"`
 }
 
-func NewOrder(name, mealType, day string, price float64, quantity int, orderUUID, userUUID uuid.UUID) *Order {
+func NewOrder(name, mealType, day string, price float64, quantity int) *Order {
 	return &Order{
-		Name:      name,
-		Price:     price,
-		OrderUuid: orderUUID,
-		UserUuid:  userUUID,
-		MealType:  mealType,
-		Quantity:  quantity,
-		Day:       day,
+		Name:     name,
+		Price:    price,
+		MealType: mealType,
+		Quantity: quantity,
+		Day:      day,
 	}
 }
 func ProtoDummy(o *DummyOrder) *proto.DummyOrder {
@@ -53,42 +51,45 @@ func DummyFromProto(pb *proto.DummyOrder) *DummyOrder {
 // Proto is
 func Proto(o *Order) *proto.Order {
 	order := &proto.Order{
-		OrderUuid: o.OrderUuid.Bytes(),
-		UserUuid:  o.UserUuid.Bytes(),
-		Name:      o.Name,
-		MealType:  o.MealType,
-		Price:     float32(o.Price),
-		Quantity:  int32(o.Quantity),
-		Day:       o.Day,
+		Name:     o.Name,
+		MealType: o.MealType,
+		Price:    float32(o.Price),
+		Quantity: int32(o.Quantity),
+		Day:      o.Day,
 	}
 	return order
 }
 
 func OrderFromProto(pb *proto.Order) *Order {
 	order := &Order{
-		Name:      pb.Name,
-		Price:     float64(pb.Price),
-		MealType:  pb.MealType,
-		OrderUuid: uuid.FromBytesOrNil(pb.OrderUuid),
-		UserUuid:  uuid.FromBytesOrNil(pb.UserUuid),
-		Quantity:  int(pb.Quantity),
-		Day:       pb.Day,
+		Name:     pb.Name,
+		Price:    float64(pb.Price),
+		MealType: pb.MealType,
+
+		Quantity: int(pb.Quantity),
+		Day:      pb.Day,
 	}
 	return order
 }
 
 // OrdersToProto is
-func OrdersToProto(orders []*Order) (pb *proto.Orders) {
-	for _, b := range orders {
+func OrdersToProto(orders *Orders) (pb *proto.Orders) {
+	orders.OrderUuid = uuid.FromBytesOrNil(pb.OrderUuid)
+	orders.UserUuid = uuid.FromBytesOrNil(pb.UserUuid)
+
+	for _, b := range orders.Order {
 		pb.Orders = append(pb.Orders, Proto(b))
 	}
 	return
 }
 
 // OrdersFromProto is
-func OrdersFromProto(pb *proto.Orders) (shops []*Order) {
+func OrdersFromProto(pb *proto.Orders) (orders *Orders) {
+	pb.OrderUuid = orders.OrderUuid.Bytes()
+	pb.UserUuid = orders.UserUuid.Bytes()
+
 	for _, b := range pb.Orders {
-		shops = append(shops, OrderFromProto(b))
+		orders.Order = append(orders.Order, OrderFromProto(b))
 	}
 	return
 }

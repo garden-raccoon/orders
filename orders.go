@@ -21,12 +21,10 @@ var Debug = true
 
 // IOrderAPI is
 type IOrderAPI interface {
-	GetOrders() ([]*models.Order, error)
-	AllOrders(pb *proto.Orders) ([]*models.Order, error)
+	GetOrders() (*models.Orders, error)
 
 	//OrderByTitle(title string) (*models.Order, error)
 
-	CreateDummyOrder(s *models.DummyOrder) error
 	CreateOrders(s *models.Orders) error
 	// Close GRPC Api connection
 	Close() error
@@ -52,11 +50,8 @@ func New(addr string) (IOrderAPI, error) {
 	api.OrderServiceClient = proto.NewOrderServiceClient(api.ClientConn)
 	return api, nil
 }
-func (api *Api) AllOrders(pb *proto.Orders) ([]*models.Order, error) {
-	ppp := models.OrdersFromProto(pb)
-	return ppp, nil
-}
-func (api *Api) GetOrders() ([]*models.Order, error) {
+
+func (api *Api) GetOrders() (*models.Orders, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
 
@@ -69,30 +64,15 @@ func (api *Api) GetOrders() ([]*models.Order, error) {
 
 	orders := models.OrdersFromProto(resp)
 
-	if Debug {
-		fmt.Println(orders)
-	}
 	return orders, nil
 }
 func (api *Api) CreateOrders(s *models.Orders) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
 
-	var orders = models.OrdersToProto(s.Order)
+	var orders = models.OrdersToProto(s)
 
 	_, err = api.OrderServiceClient.CreateOrders(ctx, orders)
-	if err != nil {
-		return fmt.Errorf("create order api request: %w", err)
-	}
-	return nil
-}
-func (api *Api) CreateDummyOrder(s *models.DummyOrder) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
-	defer cancel()
-
-	dummy := models.ProtoDummy(s)
-
-	_, err = api.OrderServiceClient.CreateDummyOrder(ctx, dummy)
 	if err != nil {
 		return fmt.Errorf("create order api request: %w", err)
 	}

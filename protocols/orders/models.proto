@@ -5,17 +5,17 @@ option go_package = "protocols/orders";
 
 // Shop is
 message Order {
-    bytes           order_uuid        = 1;
-    bytes           user_uuid        = 2;
-    string          name        = 3;
-    string          mealType = 4;
-    float           price       = 5;
-    int32 quantity =6;
-    string day = 7;
+    string          name        = 1;
+    string          mealType = 2;
+    float           price       = 3;
+    int32 quantity =4;
+    string day = 5;
 }
 
 message Orders{
     repeated Order Orders = 1;
+    bytes           order_uuid        = 2;
+    bytes           user_uuid        = 3;
 }
 
 message DummyOrder{
