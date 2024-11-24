@@ -30,7 +30,7 @@ const (
 //
 // OrderService is
 type OrderServiceClient interface {
-	GetOrders(ctx context.Context, in *OrderEmpty, opts ...grpc.CallOption) (*Orders, error)
+	GetOrders(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Orders, error)
 	CreateOrders(ctx context.Context, in *Orders, opts ...grpc.CallOption) (*OrderEmpty, error)
 	CreateDummyOrder(ctx context.Context, in *DummyOrder, opts ...grpc.CallOption) (*OrderEmpty, error)
 }
@@ -43,7 +43,7 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
 }
 
-func (c *orderServiceClient) GetOrders(ctx context.Context, in *OrderEmpty, opts ...grpc.CallOption) (*Orders, error) {
+func (c *orderServiceClient) GetOrders(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Orders, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Orders)
 	err := c.cc.Invoke(ctx, OrderService_GetOrders_FullMethodName, in, out, cOpts...)
@@ -79,7 +79,7 @@ func (c *orderServiceClient) CreateDummyOrder(ctx context.Context, in *DummyOrde
 //
 // OrderService is
 type OrderServiceServer interface {
-	GetOrders(context.Context, *OrderEmpty) (*Orders, error)
+	GetOrders(context.Context, *GetOrderRequest) (*Orders, error)
 	CreateOrders(context.Context, *Orders) (*OrderEmpty, error)
 	CreateDummyOrder(context.Context, *DummyOrder) (*OrderEmpty, error)
 	mustEmbedUnimplementedOrderServiceServer()
@@ -92,7 +92,7 @@ type OrderServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrderServiceServer struct{}
 
-func (UnimplementedOrderServiceServer) GetOrders(context.Context, *OrderEmpty) (*Orders, error) {
+func (UnimplementedOrderServiceServer) GetOrders(context.Context, *GetOrderRequest) (*Orders, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
 }
 func (UnimplementedOrderServiceServer) CreateOrders(context.Context, *Orders) (*OrderEmpty, error) {
@@ -123,7 +123,7 @@ func RegisterOrderServiceServer(s grpc.ServiceRegistrar, srv OrderServiceServer)
 }
 
 func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderEmpty)
+	in := new(GetOrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: OrderService_GetOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).GetOrders(ctx, req.(*OrderEmpty))
+		return srv.(OrderServiceServer).GetOrders(ctx, req.(*GetOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

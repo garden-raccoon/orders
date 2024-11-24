@@ -48,6 +48,10 @@ func DummyFromProto(pb *proto.DummyOrder) *DummyOrder {
 	}
 }
 
+func GetOrderRequest(userUUID uuid.UUID) *proto.GetOrderRequest {
+	return &proto.GetOrderRequest{UserUuid: userUUID.Bytes()}
+}
+
 // Proto is
 func Proto(o *Order) *proto.Order {
 	order := &proto.Order{

@@ -7,11 +7,13 @@ import "models.proto";
 
 // OrderService is
 service OrderService {
-    rpc GetOrders(OrderEmpty) returns(models.Orders);
+    rpc GetOrders(GetOrderRequest) returns(models.Orders);
     rpc CreateOrders(models.Orders) returns(OrderEmpty);
     rpc CreateDummyOrder(models.DummyOrder) returns(OrderEmpty);
 
 }
-
+message GetOrderRequest{
+    bytes           user_uuid        = 1;
+}
 message OrderEmpty {}
 
