@@ -8,8 +8,10 @@ message Order {
     string          name        = 1;
     string          mealType = 2;
     float           price       = 3;
-    int32 quantity =4;
-    string day = 5;
+    int64 quantity = 4;
+    int64 status =   5;
+    string day =     6;
+
 }
 
 message Orders{
@@ -18,7 +20,3 @@ message Orders{
     bytes           user_uuid        = 3;
 }
 
-message DummyOrder{
-    bytes           order_uuid        = 1;
-    bytes           user_uuid        = 2;
-}

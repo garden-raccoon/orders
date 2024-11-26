@@ -12,11 +12,6 @@ type Orders struct {
 	Order     []*Order
 }
 
-type DummyOrder struct {
-	OrderUuid uuid.UUID `json:"order_uuid"`
-	UserUuid  uuid.UUID `json:"user_uuid"`
-}
-
 // Order is
 type Order struct {
 	Name     string  `json:"title"`
@@ -24,27 +19,17 @@ type Order struct {
 	MealType string  `json:"mealType"`
 	Quantity int     `json:"quantity"`
 	Day      string  `json:"day"`
+	Status   int     `json:"status"`
 }
 
-func NewOrder(name, mealType, day string, price float64, quantity int) *Order {
+func NewOrder(name, mealType, day string, price float64, quantity, status int) *Order {
 	return &Order{
 		Name:     name,
 		Price:    price,
 		MealType: mealType,
 		Quantity: quantity,
 		Day:      day,
-	}
-}
-func ProtoDummy(o *DummyOrder) *proto.DummyOrder {
-	return &proto.DummyOrder{
-		OrderUuid: o.OrderUuid.Bytes(),
-		UserUuid:  o.UserUuid.Bytes(),
-	}
-}
-func DummyFromProto(pb *proto.DummyOrder) *DummyOrder {
-	return &DummyOrder{
-		OrderUuid: uuid.FromBytesOrNil(pb.OrderUuid),
-		UserUuid:  uuid.FromBytesOrNil(pb.UserUuid),
+		Status:   status,
 	}
 }
 
@@ -58,7 +43,8 @@ func Proto(o *Order) *proto.Order {
 		Name:     o.Name,
 		MealType: o.MealType,
 		Price:    float32(o.Price),
-		Quantity: int32(o.Quantity),
+		Quantity: int64(o.Quantity),
+		Status:   int64(o.Status),
 		Day:      o.Day,
 	}
 	return order
@@ -69,7 +55,7 @@ func OrderFromProto(pb *proto.Order) *Order {
 		Name:     pb.Name,
 		Price:    float64(pb.Price),
 		MealType: pb.MealType,
-
+		Status:   int(pb.Status),
 		Quantity: int(pb.Quantity),
 		Day:      pb.Day,
 	}

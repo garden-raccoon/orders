@@ -9,7 +9,6 @@ import "models.proto";
 service OrderService {
     rpc GetOrders(GetOrderRequest) returns(models.Orders);
     rpc CreateOrders(models.Orders) returns(OrderEmpty);
-    rpc CreateDummyOrder(models.DummyOrder) returns(OrderEmpty);
 
 }
 message GetOrderRequest{
