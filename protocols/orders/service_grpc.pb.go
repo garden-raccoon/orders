@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	OrderService_GetOrders_FullMethodName    = "/models.OrderService/GetOrders"
+	OrderService_GetAllOrders_FullMethodName = "/models.OrderService/GetAllOrders"
 	OrderService_CreateOrders_FullMethodName = "/models.OrderService/CreateOrders"
 )
 
@@ -30,6 +31,7 @@ const (
 // OrderService is
 type OrderServiceClient interface {
 	GetOrders(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*Orders, error)
+	GetAllOrders(ctx context.Context, in *OrderEmpty, opts ...grpc.CallOption) (*Orders, error)
 	CreateOrders(ctx context.Context, in *Orders, opts ...grpc.CallOption) (*OrderEmpty, error)
 }
 
@@ -45,6 +47,16 @@ func (c *orderServiceClient) GetOrders(ctx context.Context, in *GetOrderRequest,
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Orders)
 	err := c.cc.Invoke(ctx, OrderService_GetOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) GetAllOrders(ctx context.Context, in *OrderEmpty, opts ...grpc.CallOption) (*Orders, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Orders)
+	err := c.cc.Invoke(ctx, OrderService_GetAllOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +80,7 @@ func (c *orderServiceClient) CreateOrders(ctx context.Context, in *Orders, opts 
 // OrderService is
 type OrderServiceServer interface {
 	GetOrders(context.Context, *GetOrderRequest) (*Orders, error)
+	GetAllOrders(context.Context, *OrderEmpty) (*Orders, error)
 	CreateOrders(context.Context, *Orders) (*OrderEmpty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
@@ -81,6 +94,9 @@ type UnimplementedOrderServiceServer struct{}
 
 func (UnimplementedOrderServiceServer) GetOrders(context.Context, *GetOrderRequest) (*Orders, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
+}
+func (UnimplementedOrderServiceServer) GetAllOrders(context.Context, *OrderEmpty) (*Orders, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllOrders not implemented")
 }
 func (UnimplementedOrderServiceServer) CreateOrders(context.Context, *Orders) (*OrderEmpty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrders not implemented")
@@ -124,6 +140,24 @@ func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_GetAllOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderEmpty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetAllOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetAllOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetAllOrders(ctx, req.(*OrderEmpty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_CreateOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Orders)
 	if err := dec(in); err != nil {
@@ -152,6 +186,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrders",
 			Handler:    _OrderService_GetOrders_Handler,
+		},
+		{
+			MethodName: "GetAllOrders",
+			Handler:    _OrderService_GetAllOrders_Handler,
 		},
 		{
 			MethodName: "CreateOrders",

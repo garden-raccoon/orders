@@ -8,6 +8,7 @@ import "models.proto";
 // OrderService is
 service OrderService {
     rpc GetOrders(GetOrderRequest) returns(models.Orders);
+    rpc GetAllOrders(OrderEmpty) returns(models.Orders);
     rpc CreateOrders(models.Orders) returns(OrderEmpty);
 
 }

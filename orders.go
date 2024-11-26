@@ -23,6 +23,7 @@ var Debug = true
 type IOrderAPI interface {
 	GetOrders(req *proto.GetOrderRequest) (*models.Orders, error)
 
+	GetAllOrders() (*models.Orders, error)
 	//OrderByTitle(title string) (*models.Order, error)
 
 	CreateOrders(s *models.Orders) error
@@ -51,6 +52,20 @@ func New(addr string) (IOrderAPI, error) {
 	return api, nil
 }
 
+func (api *Api) GetAllOrders() (*models.Orders, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
+	defer cancel()
+	var resp *proto.Orders
+	empty := &proto.OrderEmpty{}
+	resp, err := api.OrderServiceClient.GetAllOrders(ctx, empty)
+	if err != nil {
+		return nil, fmt.Errorf("GetOrders api request: %w", err)
+	}
+
+	orders := models.OrdersFromProto(resp)
+
+	return orders, nil
+}
 func (api *Api) GetOrders(req *proto.GetOrderRequest) (*models.Orders, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), api.timeout)
 	defer cancel()
